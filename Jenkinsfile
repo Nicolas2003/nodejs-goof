@@ -30,5 +30,12 @@ pipeline {
                 sh 'npm audit || true' // This will show known CVEs in the output
             }
         }
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('sonarcloud') {
+                    sh "${tool 'sonar-scanner'}/bin/sonar-scanner -Dsonar.projectVersion=${BUILD_NUMBER}"
+                }
+            }
+        }
     }
 }
