@@ -1,17 +1,30 @@
 pipeline {
     agent any
-
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main', url: 'https://github.com/Nicolas2003/nodejs-goof.git'
             }
         }
-        stage('Verify') {
+        stage('Install Dependencies') {
             steps {
-                sh 'git log -1 --oneline'
-                sh 'ls -la'
-                sh 'cat package.json'
+                sh 'npm install'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh 'npm test || true' // Allows pipeline to continue despite test failures
+            }
+        }
+        stage('Generate Coverage Report') {
+            steps {
+                // Ensure coverage report exists
+                sh 'npm run coverage || true'
+            }
+        }
+        stage('NPM Audit (Security Scan)') {
+            steps {
+                sh 'npm audit || true' // This will show known CVEs in the output
             }
         }
     }
