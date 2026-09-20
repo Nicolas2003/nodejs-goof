@@ -1,2 +1,3 @@
 Testing if the pipeline works to check every commit being sent
 Another test
+Another one

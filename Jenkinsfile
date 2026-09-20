@@ -4,7 +4,7 @@ pipeline {
         nodejs 'NodeJS_22-23-2'
     }
     triggers {
-        pollSCM('H/1 * * * *')
+        pollSCM('* * * * *')
     }
     stages {
         stage('Checkout') {
