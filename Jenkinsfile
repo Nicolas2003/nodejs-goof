@@ -3,6 +3,9 @@ pipeline {
     tools {
         nodejs 'NodeJS_22-23-2'
     }
+    triggers {
+        pollSCM('H/1 * * * *')
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -16,18 +19,17 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh 'npm test || true' // Allows pipeline to continue despite test failures
+                sh 'npm test || true'
             }
         }
         stage('Generate Coverage Report') {
             steps {
-                // Ensure coverage report exists
                 sh 'npm run coverage || true'
             }
         }
         stage('NPM Audit (Security Scan)') {
             steps {
-                sh 'npm audit || true' // This will show known CVEs in the output
+                sh 'npm audit || true'
             }
         }
         stage('SonarQube analysis') {
@@ -35,6 +37,11 @@ pipeline {
                 withSonarQubeEnv('sonarcloud') {
                     sh "${tool 'sonar-scanner'}/bin/sonar-scanner -Dsonar.projectVersion=${BUILD_NUMBER}"
                 }
+            }
+        }
+        stage('Build'){
+            steps{
+                sh 'npm run build'
             }
         }
     }
